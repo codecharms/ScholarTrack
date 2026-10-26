@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ScholarTrack — Academic Performance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#00A15D; --green-press:#008C50;
+  --ink:#214B4B; --ink-2:#2F5755; --muted:#71817B;
+  --deep:#1E4B2D;
+  --mint:#C3E6DA; --mint-chip:#DDF1DD;
+  --bg:#F8F7F2; --topbar:#FAF9F5; --card:#FFFFFF;
+  --line:#E7E9E2; --rule:#D3D7D0;
+  --good-bg:#DFF1E0; --good:#2F6B45;
+  --warn-bg:#FDEBC2; --warn:#A8620A;
+  --bad-bg:#FBDADA;  --bad:#C93434;
+  --sand-bg:#F7EFE0; --sand-line:#CDB98E; --sand-ink:#4A3434; --sand-muted:#86703F;
+  --sidebar-w:326px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'Public Sans','Inter','Segoe UI',Arial,system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+:focus-visible{outline:3px solid #F1D94C;outline-offset:2px}
+
+.app{display:flex;min-height:100vh;width:100%}
+
+/* ---------- sidebar ---------- */
+.sidebar{width:var(--sidebar-w);flex:0 0 var(--sidebar-w);background:var(--green);color:#fff;display:flex;flex-direction:column;padding:0 20px 26px;position:sticky;top:0;height:100vh;--solar-secondary-opacity:.75}
+.brand{min-height:122px;display:flex;flex-direction:column;justify-content:center;gap:7px;padding:0 16px;margin-bottom:14px}
+.brand-row{display:flex;align-items:center;gap:12px}
+.brand-icon{--solar-secondary-opacity:1;display:flex}
+.brand-icon svg{width:42px;height:42px}
+.brand h2{margin:0;font-size:28px;line-height:1.1;font-weight:700;letter-spacing:.1px}
+.brand-sub{margin:0;font-size:9.5px;line-height:1.4;opacity:.92}
+.menu{display:flex;flex-direction:column;gap:7px;margin:0 14px 22px}
+.menu a{display:flex;align-items:center;gap:14px;height:46px;padding:0 14px;border-radius:9px;color:#fff;text-decoration:none;font-size:16px;font-weight:500;transition:background .15s}
+.menu a:hover{background:rgba(255,255,255,.15)}
+.menu a.active{background:#fff;color:var(--green);font-weight:700}
+.menu svg{width:22px;height:22px;flex:0 0 22px}
+.logout{margin-top:auto;border-top:1px solid rgba(255,255,255,.85);padding-top:16px}
+.logout button{display:block;width:100%;text-align:left;background:none;border:0;color:#fff;font-size:14px;padding:10px 21px;border-radius:9px;cursor:pointer}
+.logout button:hover{background:rgba(255,255,255,.15)}
+
+/* ---------- topbar ---------- */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:122px;min-height:122px;background:var(--topbar);border-bottom:1px solid #F0EEE7;display:flex;align-items:center;justify-content:flex-end;gap:20px;padding:0 34px}
+.bell{position:relative;width:30px;height:32px;color:var(--green);display:flex;align-items:center;justify-content:center}
+.bell svg{width:29px;height:32px}
+.bell .dot{position:absolute;right:0;top:2px;width:9px;height:9px;border-radius:50%;background:#F1D94C;border:1px solid var(--topbar)}
+.profile{display:flex;align-items:center;gap:15px}
+.avatar{width:60px;height:60px;border-radius:50%;background:var(--mint);color:var(--green);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.avatar svg{width:42px;height:42px}
+.who-name{font-size:20px;font-weight:700;color:var(--ink);line-height:1.25}
+.who-role{font-size:15px;color:#A1AAA6;line-height:1.25}
+.chev{width:30px;height:30px;margin-left:22px;color:#AEB7B2;display:flex;--solar-secondary-opacity:.35}
+.chev svg{width:30px;height:30px}
+
+/* ---------- content ---------- */
+.content{padding:28px 32px 44px}
+.page-title{margin:0 0 6px;font-size:34px;line-height:1.2;font-weight:700;color:var(--ink)}
+.page-sub{margin:0 0 24px;font-size:16px;color:var(--ink-2)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;min-width:0}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.card-head h2{margin:0;font-size:20px;font-weight:700;color:var(--ink)}
+.sub{margin:0;font-size:12.5px;color:var(--ink-2)}
+.chip{display:inline-flex;align-items:center;padding:4px 13px;border-radius:99px;background:var(--mint);color:var(--ink);font-size:12px;font-weight:700;white-space:nowrap}
+.chip.soft{background:var(--mint-chip);color:#36534D}
+.pill{display:inline-block;min-width:54px;text-align:center;font-size:13px;font-weight:700;padding:3px 10px;border-radius:99px}
+.pill.good{background:var(--good-bg);color:var(--good)}
+.pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.bad{background:var(--bad-bg);color:var(--bad)}
+
+.toggle{display:inline-flex;gap:4px;background:#fff;border:1px solid #E2E9E1;border-radius:10px;padding:4px}
+.toggle button{border:0;background:transparent;color:var(--ink);font-size:13px;font-weight:500;padding:8px 20px;border-radius:7px;cursor:pointer}
+.toggle button:hover{background:#F1F6F2}
+.toggle button.active{background:var(--mint);font-weight:700}
+
+.btn{border:0;border-radius:9px;background:var(--green);color:#fff;font-size:14px;font-weight:700;padding:10px 20px;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--green-press)}
+
+/* ---------- dashboard ---------- */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 22px;min-height:140px}
+.stat .ico{height:26px;display:flex;align-items:center;color:var(--deep);font-size:22px;font-weight:700;--solar-secondary-opacity:.55}
+.stat .ico svg{width:26px;height:26px}
+.stat h4{margin:8px 0;font-size:13px;font-weight:700;color:var(--deep)}
+.stat .val{font-size:28px;font-weight:600;line-height:1.2;color:var(--ink)}
+.stat .val.sm{font-size:21px}
+.stat .meta{margin:6px 0 0;font-size:13px;color:var(--ink-2)}
+
+.attention{margin-bottom:14px}
+.attention-list{display:grid;gap:8px}
+.attention-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:9px 14px;border:1px solid var(--sand-line);border-radius:7px;background:var(--sand-bg)}
+.attention-row strong{color:var(--sand-ink);font-size:15px}
+.attention-row span{color:var(--sand-muted);font-size:12.5px}
+
+.two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.preview-tools{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.chart{display:block;width:100%;height:auto;border-radius:8px;margin-top:10px}
+.chart.warm{background:#FCF8F4}
+.chart.sage{background:#F2F5EF}
+.legend{display:flex;justify-content:center;align-items:center;gap:22px;flex-wrap:wrap;margin-top:14px;font-size:12px;color:var(--ink-2)}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--green);margin-right:8px;vertical-align:-3px}
+
+.grade-bar{display:flex;align-items:center;gap:26px;flex-wrap:wrap;margin-top:6px}
+.donut-wrap{flex:0 1 210px;min-width:170px;text-align:center}
+.donut{display:block;width:100%;max-width:210px;height:auto;margin:0 auto}
+.donut-cap{margin:6px 0 0;font-size:12.5px;color:var(--ink-2)}
+.avg-rows{flex:1 1 200px;min-width:190px}
+.avg-row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--rule);font-size:13px;color:var(--ink-2)}
+.avg-row strong{color:var(--ink);font-size:13px}
+
+/* ---------- academic performance ---------- */
+.section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;margin:0 0 16px}
+.section-head h2{margin:0 0 4px;font-size:26px;font-weight:700;color:var(--ink)}
+.perf-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.hl-row{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr) auto;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--rule);font-size:14px;color:var(--ink-2)}
+.hl-row:last-child{border-bottom:0}
+.hl-row b{color:var(--ink);font-weight:700}
+.hl-row .hl-val{font-weight:700;color:var(--ink);text-align:right}
+.hl-row .hl-name{text-align:right}
+.summary-list .srow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 4px;border-bottom:1px solid var(--rule)}
+.summary-list .srow:last-child{border-bottom:0}
+.srow .nm{font-weight:700;color:var(--deep);font-size:14px}
+.srow .cd{font-size:13px;color:var(--ink-2);margin-left:6px}
+
+/* ---------- subjects ---------- */
+.subject{border-bottom:1px solid var(--rule)}
+.subject:last-child{border-bottom:0}
+.subject-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 4px}
+.subject-row strong{display:block;font-size:16px;color:var(--deep)}
+.subject-row p{margin:2px 0 0;font-size:14px;color:var(--ink-2)}
+.subject-actions{display:flex;align-items:center;gap:12px}
+.grade-breakdown{display:none;background:var(--mint);border-radius:10px;padding:16px 16px 18px;margin:0 0 16px}
+.grade-breakdown.open{display:block}
+.grade-breakdown h3{margin:0 0 4px;font-size:20px;font-weight:700;color:var(--ink)}
+.grade-breakdown .terms{margin:0 0 14px;font-size:13px;color:var(--ink-2)}
+.bd-layout{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:20px;align-items:start}
+.bd-card{background:#FDF9F7;border:1px solid #E6E3DC;border-radius:10px;padding:16px 18px;max-width:560px}
+.bd-cols{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(210px,1fr);gap:22px}
+.bd-head{font-size:12px;color:#7F8AA0;margin-bottom:6px}
+.bd-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EFE9E4;font-size:12.5px;color:#6A7587}
+.bd-row small{color:#9AA3B5;font-size:12.5px}
+.score{min-width:62px;text-align:center;padding:6px 10px;border:1px solid #DCDDD3;border-radius:8px;background:#F8F5F1;color:var(--ink);font-size:13px;font-weight:500}
+.bd-total{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid #E6E3DC;font-size:12.5px;color:#6A7587}
+.bd-total strong{font-size:14px;color:var(--ink)}
+.term-cells{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.term-cell{background:#fff;border-radius:10px;padding:12px 14px}
+.term-cell small{display:block;font-size:12px;color:var(--muted);margin-bottom:2px}
+.term-cell strong{font-size:20px;color:var(--ink)}
+.fb-link{display:inline-block;margin-top:12px;font-size:13px;font-weight:700;color:var(--ink)}
+
+/* ---------- study recommendations ---------- */
+.note{background:var(--mint);border-radius:10px;padding:14px 20px;margin-bottom:18px;color:var(--ink)}
+.note strong{font-size:16px}
+.note p{margin:4px 0 0;font-size:15px;color:var(--ink-2)}
+.recs-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:12px;align-items:start}
+.guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.guide{display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px}
+.guide-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px}
+.guide h3{margin:0;font-size:16px;line-height:1.3;font-weight:700;color:var(--ink)}
+.guide .focus{margin:0 0 6px;font-size:12px;color:var(--ink-2)}
+.guide ul{margin:0 0 14px;padding-left:18px;font-size:12px;color:var(--ink-2)}
+.guide li{margin-bottom:3px}
+.guide .mark{margin-top:auto;align-self:flex-start;border:0;border-radius:7px;background:var(--mint);color:var(--ink);font-size:12px;font-weight:700;padding:7px 12px;cursor:pointer;transition:background .15s,color .15s}
+.guide .mark:hover{background:#B2DBCC}
+.guide .mark.done{background:var(--green);color:#fff}
+.fb-card h2{margin:0 0 6px;font-size:20px;font-weight:700;color:var(--ink)}
+.fb-group{padding:12px 0 10px;border-bottom:1px solid var(--rule)}
+.fb-group:last-child{border-bottom:0}
+.fb-top{display:flex;justify-content:space-between;gap:10px;font-size:12px}
+.fb-top b{color:var(--deep);font-weight:700}
+.fb-top span{color:var(--muted)}
+.fb-author{margin:2px 0 0;font-size:12px;font-weight:700;color:var(--deep)}
+.fb-text{margin:2px 0 0;font-size:12.5px;color:var(--ink-2)}
+
+/* ---------- profile ---------- */
+.profile-card{max-width:600px;border-radius:26px;padding:40px 44px 44px;text-align:center}
+.avatar.xl{width:154px;height:154px;margin:0 auto 18px}
+.avatar.xl svg{width:104px;height:104px}
+.profile-card h2{margin:0;font-size:38px;line-height:1.2;font-weight:700;color:var(--deep)}
+.profile-card .role{margin:4px 0 30px;font-size:15px;color:var(--ink-2)}
+.detail{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--rule);text-align:left;font-size:13px;color:var(--ink-2)}
+.detail strong{color:var(--deep);text-align:right}
+
+/* ---------- responsive ---------- */
+@media(max-width:1200px){
+  :root{--sidebar-w:270px}
+  .brand h2{font-size:24px}
+  .brand-icon svg{width:36px;height:36px}
+  .menu{margin-left:0;margin-right:0}
+  .menu a{font-size:15px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .recs-layout{grid-template-columns:1fr}
+}
+@media(max-width:980px){
+  .two-col,.perf-grid,.bd-layout{grid-template-columns:1fr}
+}
+@media(max-width:800px){
+  .app{flex-direction:column}
+  .sidebar{position:static;width:100%;flex:none;height:auto;padding:0 16px 14px}
+  .brand{min-height:0;padding:18px 8px 12px;margin-bottom:6px}
+  .menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:0 0 10px}
+  .menu a{height:44px;font-size:14px;padding:0 10px;gap:10px}
+  .logout{margin-top:0;padding-top:8px}
+  .topbar{height:auto;min-height:82px;padding:12px 16px;gap:14px}
+  .avatar{width:46px;height:46px}.avatar svg{width:32px;height:32px}
+  .who-name{font-size:16px}.who-role{font-size:13px}
+  .chev{margin-left:0;width:24px;height:24px}.chev svg{width:24px;height:24px}
+  .content{padding:22px 16px 36px}
+  .page-title{font-size:27px}
+  .bd-cols{grid-auto-flow:row}
+  .term-cells{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .stats,.guide-grid{grid-template-columns:1fr}
+  .attention-row,.subject-row{flex-direction:column;align-items:flex-start}
+  .hl-row{grid-template-columns:1fr auto}
+  .hl-row .hl-name{grid-column:1 / -1;text-align:left;order:3}
+  .profile-card{padding:30px 22px}
+  .profile-card h2{font-size:30px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---------- topbar dropdowns ---------- */
+.topbar{position:relative;z-index:40}
+.dd{position:relative}
+.panel[hidden],.mini-menu[hidden]{display:none}
+button.bell,button.profile-btn,button.icon-btn{border:0;background:none;padding:0;cursor:pointer;font:inherit;color:inherit}
+button.bell{border-radius:50%;width:40px;height:40px;color:var(--green)}
+button.bell:hover,button.bell[aria-expanded="true"]{background:rgba(0,161,93,.1)}
+.bell .count-dot{position:absolute;right:2px;top:2px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;background:#F1D94C;color:#3B3410;font-size:10px;font-weight:700;line-height:16px;text-align:center;border:1px solid var(--topbar)}
+.profile-btn{display:flex;align-items:center;gap:15px;text-align:left;border-radius:14px;padding:4px 6px 4px 4px}
+.profile-btn:hover{background:rgba(0,161,93,.07)}
+.profile-btn .who{display:block}
+.profile-btn .who-name,.profile-btn .who-role{display:block}
+.profile-btn .chev{margin-left:14px;transition:transform .15s}
+.profile-btn[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.panel{position:absolute;z-index:60;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 40px rgba(20,60,45,.18)}
+.notif-panel{top:calc(100% + 14px);right:-20px;width:390px;max-width:calc(100vw - 24px)}
+.np-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 8px}
+.np-head h3{margin:0;font-size:19px;font-weight:700;color:var(--ink)}
+.icon-btn{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink-2)}
+.icon-btn svg{width:22px;height:22px}
+.icon-btn:hover,.icon-btn[aria-expanded="true"]{background:#EEF3EF}
+.np-more{position:relative}
+.mini-menu{position:absolute;right:0;top:calc(100% + 6px);min-width:200px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 28px rgba(20,60,45,.18);padding:6px;z-index:5}
+.mini-menu button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;text-align:left;font:inherit;font-size:14px;font-weight:600;color:var(--ink);padding:9px 10px;border-radius:7px;cursor:pointer}
+.mini-menu button:hover{background:#EEF6F0}
+.mini-menu button:disabled{opacity:.45;cursor:default;background:none}
+.mini-menu svg{width:18px;height:18px;color:var(--green)}
+.np-tabs{display:flex;gap:6px;padding:0 18px 10px;border-bottom:1px solid var(--line)}
+.np-tabs button{border:0;background:none;font:inherit;font-size:14px;font-weight:600;color:var(--ink-2);padding:7px 16px;border-radius:99px;cursor:pointer}
+.np-tabs button:hover{background:#F1F6F2}
+.np-tabs button.active{background:var(--mint);color:var(--ink)}
+.np-tabs .num{display:inline-block;min-width:18px;margin-left:5px;padding:0 5px;border-radius:99px;background:var(--green);color:#fff;font-size:11px;line-height:18px;text-align:center}
+.np-list{list-style:none;margin:0;padding:6px;max-height:min(420px,calc(100vh - 260px));overflow-y:auto}
+.n-item{display:flex;align-items:flex-start;gap:12px;padding:11px 10px;border-radius:10px;text-decoration:none;color:var(--ink-2);position:relative}
+.n-item:hover{background:#F4F8F5}
+.n-item.unread{background:#F0F8F2}
+.n-item.unread:hover{background:#E6F3E9}
+.n-ico{flex:0 0 38px;height:38px;border-radius:50%;background:var(--mint);color:var(--deep);display:flex;align-items:center;justify-content:center;--solar-secondary-opacity:.6}
+.n-ico svg{width:20px;height:20px}
+.n-item.alert .n-ico{background:var(--warn-bg);color:var(--warn)}
+.n-body{flex:1;min-width:0;font-size:13px;line-height:1.4}
+.n-body b{display:block;font-size:14px;color:var(--ink);margin-bottom:1px}
+.n-body small{display:block;margin-top:3px;font-size:12px;color:var(--muted)}
+.n-item.unread .n-body small{color:var(--green);font-weight:700}
+.n-dot{flex:0 0 10px;width:10px;height:10px;border-radius:50%;background:var(--green);margin-top:6px;visibility:hidden}
+.n-item.unread .n-dot{visibility:visible}
+.np-empty{padding:34px 18px;text-align:center;color:var(--ink-2);font-size:14px}
+.np-empty strong{display:block;font-size:16px;color:var(--ink);margin-bottom:4px}
+.profile-menu{top:calc(100% + 12px);right:0;width:250px;padding:8px}
+.pm-head{padding:8px 10px 10px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.pm-head b{display:block;font-size:15px;color:var(--ink)}
+.pm-head span{font-size:12.5px;color:var(--muted)}
+.profile-menu a,.profile-menu button{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;text-align:left;font:inherit;font-size:14.5px;font-weight:600;color:var(--ink);padding:10px;border-radius:8px;cursor:pointer;text-decoration:none}
+.profile-menu a:hover,.profile-menu button:hover{background:#EEF6F0}
+.profile-menu svg{width:20px;height:20px;color:var(--green);flex:0 0 20px}
+.profile-menu .sep{height:1px;background:var(--line);margin:6px 0}
+.profile-menu .danger{color:var(--bad)}
+.profile-menu .danger svg{color:var(--bad)}
+.profile-menu .danger:hover{background:var(--bad-bg)}
+
+/* ---------- account settings dialog ---------- */
+dialog.settings{border:0;border-radius:18px;padding:0;width:min(480px,calc(100vw - 28px));box-shadow:0 24px 70px rgba(10,40,30,.35);color:var(--ink)}
+dialog.settings::backdrop{background:rgba(20,45,40,.45)}
+.sd-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:22px 24px 6px}
+.sd-head h3{margin:0;font-size:22px;font-weight:700}
+.sd-head p{margin:2px 0 0;font-size:13px;color:var(--ink-2)}
+.sd-body{padding:12px 24px 6px;display:grid;gap:14px}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:5px;color:var(--ink)}
+.field input{width:100%;font:inherit;font-size:14.5px;color:var(--ink);background:#FBFAF6;border:1px solid #D9DDD4;border-radius:9px;padding:10px 12px}
+.field input:focus{outline:3px solid var(--mint);border-color:var(--green)}
+.field input:disabled{background:#F1F2EE;color:var(--muted)}
+.field .hint{margin:4px 0 0;font-size:12px;color:var(--muted)}
+.field .err{margin:4px 0 0;font-size:12px;color:var(--bad);font-weight:600}
+.sd-foot{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:16px 24px 22px}
+.btn.ghost{background:#EEF3EF;color:var(--ink)}
+.btn.ghost:hover{background:#E2EAE4}
+.sd-saved{margin-right:auto;font-size:13px;font-weight:700;color:var(--green)}
+
+@media(max-width:800px){
+  .dd.dd-notif{position:static}
+  .notif-panel{left:12px;right:12px;width:auto;max-width:none;top:100%}
+  .profile-btn{gap:10px}
+  .profile-btn .chev{margin-left:2px}
+  .profile-menu{top:calc(100% + 8px)}
+}
+@media(max-width:560px){.profile-btn .who{display:none}}
+</style>
+</head><body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-row"><span class="brand-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><path d="M5 11.2581L9.78281 13.5003C11.2038 14.1665 12.7963 14.1665 14.2173 13.5003L19 11.2581V16.6252C19 17.6333 18.4965 18.577 17.6147 19.0654C16.1463 19.8786 13.796 20.9998 12 20.9998C10.204 20.9998 7.8537 19.8786 6.38533 19.0654C5.5035 18.577 5 17.6333 5 16.6252V11.2581Z" fill="currentColor" style="color: var(--solar-secondary-color, currentColor); opacity: var(--solar-secondary-opacity, 0.5)"/><path d="M14.2172 3.49965C12.7962 2.83345 11.2037 2.83345 9.78272 3.49965L3.0916 6.63659C2.0156 7.14105 1.73507 8.56352 2.25 9.54666L2.25 14.5C2.25 14.9142 2.58579 15.25 3 15.25C3.41421 15.25 3.75 14.9142 3.75 14.5V10.672L9.78281 13.5003C11.2038 14.1665 12.7963 14.1665 14.2173 13.5003L20.9084 10.3634C22.3639 9.68105 22.3639 7.31899 20.9084 6.63664L14.2172 3.49965Z" fill="currentColor"/></svg></span><h2>ScholarTrack</h2></div>
+    <p class="brand-sub">Cavite State University – Imus Campus · Department of Computer Studies</p>
+  </div>
+  <nav class="menu" aria-label="Main"><a href="student-dashboard.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><path d="M3 10.8 12 3l9 7.8v9.1a1 1 0 0 1-1 1h-5.4v-6.2H9.4v6.2H4a1 1 0 0 1-1-1z" fill="currentColor"/></svg><span>Dashboard</span></a><a href="student-academic-performance.html" class="active" aria-current="page"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><path d="M4 19h16v2H2V5h2z" fill="currentColor" opacity=".25"/><path d="M6 14h3v5H6zm5-5h3v10h-3zm5-4h3v14h-3z" fill="currentColor"/><path d="m5 10 5-3 4 1 5-5 1.4 1.4-5.8 5.7-4.2-1L6 11.7z" fill="currentColor"/></svg><span>Academic Performance</span></a><a href="student-subjects.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><path d="M4.72718 2.73332C5.03258 2.42535 5.46135 2.22456 6.27103 2.11478C7.10452 2.00177 8.2092 2 9.7931 2H14.2069C15.7908 2 16.8955 2.00177 17.729 2.11478C18.5387 2.22456 18.9674 2.42535 19.2728 2.73332C19.5782 3.0413 19.7773 3.47368 19.8862 4.2902C19.9982 5.13073 20 6.24474 20 7.84202L20 18H7.42598C6.34236 18 5.96352 18.0057 5.67321 18.0681C5.15982 18.1785 4.71351 18.4151 4.38811 18.7347C4.27837 18.8425 4.22351 18.8964 4.09696 19.2397C4.02435 19.4367 4 19.5687 4 19.7003V7.84202C4 6.24474 4.00176 5.13073 4.11382 4.2902C4.22268 3.47368 4.42179 3.0413 4.72718 2.73332Z" fill="currentColor" style="color: var(--solar-secondary-color, currentColor); opacity: var(--solar-secondary-opacity, 0.5)"/><path d="M20.0003 18C19.9985 18.4741 19.9931 18.8868 19.9759 19.25H8.00027C7.58605 19.25 7.25027 19.5858 7.25027 20C7.25027 20.4142 7.58605 20.75 8.00027 20.75H19.7385C19.625 21.0517 19.4704 21.2539 19.2708 21.4141C18.9642 21.66 18.5336 21.8205 17.721 21.9082C16.8843 21.9984 15.7755 22 14.1858 22H9.75515C8.16514 22 7.05572 21.9985 6.21902 21.9082C5.40635 21.8205 4.97576 21.6601 4.66921 21.4141C4.36282 21.1681 4.16325 20.8228 4.05398 20.1709C4.04579 20.122 4.0376 20.0717 4.03054 20.0205C3.99045 19.7292 3.9704 19.5826 4.09695 19.2393C4.22339 18.8962 4.2783 18.8421 4.38796 18.7344C4.71328 18.4149 5.15989 18.1788 5.67312 18.0684C5.96341 18.0059 6.34258 18 7.42605 18H20.0003Z" fill="currentColor"/><path d="M13.0003 9.75C13.4145 9.75 13.7503 10.0858 13.7503 10.5C13.7503 10.9142 13.4145 11.25 13.0003 11.25H8.00027C7.58605 11.25 7.25027 10.9142 7.25027 10.5C7.25027 10.0858 7.58605 9.75 8.00027 9.75H13.0003Z" fill="currentColor"/><path d="M16.0003 6.25C16.4145 6.25 16.7503 6.58579 16.7503 7C16.7503 7.41421 16.4145 7.75 16.0003 7.75H8.00027C7.58605 7.75 7.25027 7.41421 7.25027 7C7.25027 6.58579 7.58605 6.25 8.00027 6.25H16.0003Z" fill="currentColor"/></svg><span>Subjects</span></a><a href="student-study-recommendations.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><path d="M7.41058 13.8283L8.51463 14.8807C8.82437 15.1759 9 15.5875 9 16.0182C9 16.6653 9.518 17.1899 10.157 17.1899H13.843C14.482 17.1899 15 16.6653 15 16.0182C15 15.5875 15.1756 15.1759 15.4854 14.8807L16.5894 13.8283C18.1306 12.3481 18.9912 10.4034 18.9999 8.3817L19 8.29678C19 4.84243 15.866 2 12 2C8.13401 2 5 4.84243 5 8.29678L5.00007 8.3817C5.00875 10.4034 5.86939 12.3481 7.41058 13.8283Z" fill="currentColor" style="color: var(--solar-secondary-color, currentColor); opacity: var(--solar-secondary-opacity, 0.5)"/><path fill-rule="evenodd" clip-rule="evenodd" d="M9.25 18.7087C9.25 18.2893 9.58579 17.9492 10 17.9492H14C14.4142 17.9492 14.75 18.2893 14.75 18.7087C14.75 19.1282 14.4142 19.4682 14 19.4682H10C9.58579 19.4682 9.25 19.1282 9.25 18.7087ZM9.91667 21.2404C9.91667 20.8209 10.2525 20.4809 10.6667 20.4809H13.3333C13.7475 20.4809 14.0833 20.8209 14.0833 21.2404C14.0833 21.6598 13.7475 21.9999 13.3333 21.9999H10.6667C10.2525 21.9999 9.91667 21.6598 9.91667 21.2404Z" fill="currentColor"/></svg><span>Study Recommendations</span></a><a href="student-profile.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><circle cx="12" cy="7" r="5" fill="currentColor"/><path d="M3 21v-2a9 9 0 0 1 18 0v2z" fill="currentColor"/></svg><span>Profile</span></a></nav>
+  <div class="logout"><button type="button" onclick="location.href='login.html'">Log out</button></div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <div class="dd dd-notif">
+      <button type="button" class="bell" id="bell-btn" aria-haspopup="true" aria-expanded="false" aria-controls="notif-panel" aria-label="Notifications"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM9.5 21h5a2.5 2.5 0 0 1-5 0Z" fill="currentColor"/></svg><span class="count-dot" id="bell-count" hidden></span></button>
+      <div class="panel notif-panel" id="notif-panel" role="region" aria-label="Notifications" hidden>
+        <div class="np-head"><h3>Notifications</h3>
+          <div class="np-more">
+            <button type="button" class="icon-btn" id="np-more-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="np-menu" aria-label="More options"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><circle cx="5" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="19" cy="12" r="2" fill="currentColor"/></svg></button>
+            <div class="mini-menu" id="np-menu" role="menu" hidden><button type="button" role="menuitem" id="mark-all"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Mark all as read</button></div>
+          </div>
+        </div>
+        <div class="np-tabs" role="group" aria-label="Filter notifications"><button type="button" class="active" data-tab="all" aria-pressed="true">All</button><button type="button" data-tab="unread" aria-pressed="false">Unread<span class="num" id="tab-num" hidden></span></button></div>
+        <ul class="np-list" id="np-list"></ul>
+      </div>
+    </div>
+    <div class="dd">
+      <button type="button" class="profile-btn" id="profile-btn" aria-haspopup="true" aria-expanded="false" aria-controls="profile-menu">
+        <span class="avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><circle cx="32" cy="22" r="12" fill="currentColor"/><path d="M10 57v-5a19 19 0 0 1 44 0v5z" fill="currentColor"/></svg></span>
+        <span class="who"><span class="who-name" data-user-name>Student</span><span class="who-role">Student</span></span>
+        <span class="chev" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><path d="M3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355C22 19.0711 22 16.714 22 12C22 7.28595 22 4.92893 20.5355 3.46447C19.0711 2 16.714 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355Z" fill="currentColor" style="color: var(--solar-secondary-color, currentColor); opacity: var(--solar-secondary-opacity, 0.5)"/><path d="M9.53033 9.96967C9.23744 9.67678 8.76256 9.67678 8.46967 9.96967C8.17678 10.2626 8.17678 10.7374 8.46967 11.0303L11.4697 14.0303C11.6103 14.171 11.8011 14.25 12 14.25C12.1989 14.25 12.3897 14.171 12.5303 14.0303L15.5303 11.0303C15.8232 10.7374 15.8232 10.2626 15.5303 9.96967C15.2374 9.67678 14.7626 9.67678 14.4697 9.96967L12 12.4393L9.53033 9.96967Z" fill="currentColor"/></svg></span>
+      </button>
+      <div class="panel profile-menu" id="profile-menu" role="menu" hidden>
+        <div class="pm-head"><b data-user-name>Student</b><span>BSCS-2G · CvSU Imus</span></div>
+        <a href="student-profile.html" role="menuitem"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><circle cx="12" cy="7" r="5" fill="currentColor"/><path d="M3 21v-2a9 9 0 0 1 18 0v2z" fill="currentColor"/></svg> Profile</a>
+        <button type="button" role="menuitem" id="open-settings"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><path d="M4 7h9M17 7h3M4 17h3M11 17h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15" cy="7" r="2.5" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="17" r="2.5" stroke="currentColor" stroke-width="2"/></svg> Account Settings</button>
+        <div class="sep" role="separator"></div>
+        <button type="button" role="menuitem" class="danger" id="do-logout"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" aria-hidden="true" focusable="false" ><path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m15 8 4 4-4 4M19 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Log out</button>
+      </div>
+    </div>
+  </header>
+  <main class="content">
+
+    <h1 class="page-title">Academic Performance</h1>
+    <p class="page-sub">Review your subject grades across Midterms and Finals.</p>
+    <div class="section-head">
+      <div><h2>Performance Analytics</h2><p class="sub">Grades shown on the CvSU grading scale: 5.00 (lowest) to 1.00 (highest).</p></div>
+      <div class="toggle" role="group" aria-label="Grading period"><button type="button" class="active" aria-pressed="true" data-p="midterms">Midterm</button><button type="button" aria-pressed="false" data-p="finals">Finals</button></div>
+    </div>
+    <div class="perf-grid">
+      <section class="card">
+        <div class="card-head" style="margin-bottom:6px"><h2>Performance Analytics</h2><span class="chip" id="period-chip">Midterm</span></div>
+        <p class="sub">Grade comparison by subject · Philippine grading scale (5.00 to 1.00)</p>
+        <svg class="chart sage" id="chart" viewBox="0 0 760 295" role="img" aria-label="Line chart of grades by subject"></svg>
+        <p class="sub" style="margin-top:12px">Lower grade number indicates stronger performance.</p>
+      </section>
+      <section class="card" style="align-self:start">
+        <div class="card-head"><h2>Subject Highlights</h2></div>
+        <div class="hl-row"><span>Strongest Subject</span><b class="hl-name" id="strong-n">Database Management Systems</b><span class="hl-val" id="strong-v">1.50</span></div>
+        <div class="hl-row"><span>Weakest Subject</span><b class="hl-name" id="weak-n">Discrete Mathematics</b><span class="hl-val" id="weak-v">3.00</span></div>
+        <div class="hl-row"><span>Term Average</span><span></span><span class="hl-val" id="avg">2.25</span></div>
+        <div class="hl-row"><span>Subjects tracked</span><span></span><span class="hl-val">5</span></div>
+      </section>
+    </div>
+    <section class="card">
+      <div class="card-head"><h2>Subject grade summary</h2><span class="chip" id="table-chip">Midterm</span></div>
+      <div class="summary-list"><div class="srow"><div><span class="nm">Software Engineering II</span><span class="cd">COSC 75A</span></div><span class="pill good" id="g0">2.00</span></div><div class="srow"><div><span class="nm">Data Structures and Algorithms</span><span class="cd">COSC 63</span></div><span class="pill bad" id="g1">3.00</span></div><div class="srow"><div><span class="nm">Database Management Systems</span><span class="cd">COSC 68</span></div><span class="pill good" id="g2">1.50</span></div><div class="srow"><div><span class="nm">Web Development</span><span class="cd">COSC 71</span></div><span class="pill warn" id="g3">2.50</span></div><div class="srow"><div><span class="nm">Discrete Mathematics</span><span class="cd">MATH 2B</span></div><span class="pill bad" id="g4">3.00</span></div></div>
+    </section>
+
+  </main>
+</div>
+</div>
+<dialog class="settings" id="settings-dlg" aria-labelledby="sd-title">
+  <form method="dialog" id="settings-form" novalidate>
+    <div class="sd-head"><div><h3 id="sd-title">Account Settings</h3><p>Update how your details appear in ScholarTrack.</p></div>
+      <button type="button" class="icon-btn" id="sd-x" aria-label="Close">&#10005;</button></div>
+    <div class="sd-body">
+      <div class="field"><label for="f-name">Full name</label><input id="f-name" name="name" type="text" maxlength="60" autocomplete="name"><p class="err" id="f-name-err" hidden>Please enter your name.</p></div>
+      <div class="field"><label for="f-sid">Student ID</label><input id="f-sid" name="sid" type="text" maxlength="20" placeholder="e.g. 202312345"><p class="hint">Optional. Shown on your profile.</p></div>
+      <div class="field"><label for="f-prog">Program / Section</label><input id="f-prog" type="text" value="BSCS - 2G" disabled><p class="hint">Managed by your department.</p></div>
+    </div>
+    <div class="sd-foot"><span class="sd-saved" id="sd-saved" role="status" hidden>Saved &#10003;</span>
+      <button type="button" class="btn ghost" id="sd-cancel">Cancel</button><button type="submit" class="btn">Save changes</button></div>
+  </form>
+</dialog>
+<script>
+(function(){
+  var NOTES=[{"id": "n1", "kind": "grade", "title": "Finals grade posted", "text": "Your Database Management Systems finals grade is now available.", "time": "2 hours ago", "href": "student-academic-performance.html"}, {"id": "n2", "kind": "fb", "title": "New instructor feedback", "text": "Prof. Dela Cruz left feedback on Software Engineering II.", "time": "Yesterday", "href": "student-study-recommendations.html"}, {"id": "n3", "kind": "guide", "title": "Study guide ready", "text": "A new study guide for Discrete Mathematics is available.", "time": "Yesterday", "href": "student-study-recommendations.html"}, {"id": "n4", "kind": "alert", "title": "Subject needs attention", "text": "Data Structures and Algorithms is at 2.75. Review the recommended practice.", "time": "2 days ago", "href": "student-subjects.html"}, {"id": "n5", "kind": "grade", "title": "Midterm grades released", "text": "Your midterm grades for all 5 subjects have been posted.", "time": "Sep 12", "href": "student-academic-performance.html"}], ICONS={"grade": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"1.5\" aria-hidden=\"true\" focusable=\"false\" ><path d=\"M4 19h16v2H2V5h2z\" fill=\"currentColor\" opacity=\".25\"/><path d=\"M6 14h3v5H6zm5-5h3v10h-3zm5-4h3v14h-3z\" fill=\"currentColor\"/><path d=\"m5 10 5-3 4 1 5-5 1.4 1.4-5.8 5.7-4.2-1L6 11.7z\" fill=\"currentColor\"/></svg>", "fb": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"1.5\" aria-hidden=\"true\" focusable=\"false\" ><path d=\"M4.72718 2.73332C5.03258 2.42535 5.46135 2.22456 6.27103 2.11478C7.10452 2.00177 8.2092 2 9.7931 2H14.2069C15.7908 2 16.8955 2.00177 17.729 2.11478C18.5387 2.22456 18.9674 2.42535 19.2728 2.73332C19.5782 3.0413 19.7773 3.47368 19.8862 4.2902C19.9982 5.13073 20 6.24474 20 7.84202L20 18H7.42598C6.34236 18 5.96352 18.0057 5.67321 18.0681C5.15982 18.1785 4.71351 18.4151 4.38811 18.7347C4.27837 18.8425 4.22351 18.8964 4.09696 19.2397C4.02435 19.4367 4 19.5687 4 19.7003V7.84202C4 6.24474 4.00176 5.13073 4.11382 4.2902C4.22268 3.47368 4.42179 3.0413 4.72718 2.73332Z\" fill=\"currentColor\" style=\"color: var(--solar-secondary-color, currentColor); opacity: var(--solar-secondary-opacity, 0.5)\"/><path d=\"M20.0003 18C19.9985 18.4741 19.9931 18.8868 19.9759 19.25H8.00027C7.58605 19.25 7.25027 19.5858 7.25027 20C7.25027 20.4142 7.58605 20.75 8.00027 20.75H19.7385C19.625 21.0517 19.4704 21.2539 19.2708 21.4141C18.9642 21.66 18.5336 21.8205 17.721 21.9082C16.8843 21.9984 15.7755 22 14.1858 22H9.75515C8.16514 22 7.05572 21.9985 6.21902 21.9082C5.40635 21.8205 4.97576 21.6601 4.66921 21.4141C4.36282 21.1681 4.16325 20.8228 4.05398 20.1709C4.04579 20.122 4.0376 20.0717 4.03054 20.0205C3.99045 19.7292 3.9704 19.5826 4.09695 19.2393C4.22339 18.8962 4.2783 18.8421 4.38796 18.7344C4.71328 18.4149 5.15989 18.1788 5.67312 18.0684C5.96341 18.0059 6.34258 18 7.42605 18H20.0003Z\" fill=\"currentColor\"/><path d=\"M13.0003 9.75C13.4145 9.75 13.7503 10.0858 13.7503 10.5C13.7503 10.9142 13.4145 11.25 13.0003 11.25H8.00027C7.58605 11.25 7.25027 10.9142 7.25027 10.5C7.25027 10.0858 7.58605 9.75 8.00027 9.75H13.0003Z\" fill=\"currentColor\"/><path d=\"M16.0003 6.25C16.4145 6.25 16.7503 6.58579 16.7503 7C16.7503 7.41421 16.4145 7.75 16.0003 7.75H8.00027C7.58605 7.75 7.25027 7.41421 7.25027 7C7.25027 6.58579 7.58605 6.25 8.00027 6.25H16.0003Z\" fill=\"currentColor\"/></svg>", "guide": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"1.5\" aria-hidden=\"true\" focusable=\"false\" ><path d=\"M7.41058 13.8283L8.51463 14.8807C8.82437 15.1759 9 15.5875 9 16.0182C9 16.6653 9.518 17.1899 10.157 17.1899H13.843C14.482 17.1899 15 16.6653 15 16.0182C15 15.5875 15.1756 15.1759 15.4854 14.8807L16.5894 13.8283C18.1306 12.3481 18.9912 10.4034 18.9999 8.3817L19 8.29678C19 4.84243 15.866 2 12 2C8.13401 2 5 4.84243 5 8.29678L5.00007 8.3817C5.00875 10.4034 5.86939 12.3481 7.41058 13.8283Z\" fill=\"currentColor\" style=\"color: var(--solar-secondary-color, currentColor); opacity: var(--solar-secondary-opacity, 0.5)\"/><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M9.25 18.7087C9.25 18.2893 9.58579 17.9492 10 17.9492H14C14.4142 17.9492 14.75 18.2893 14.75 18.7087C14.75 19.1282 14.4142 19.4682 14 19.4682H10C9.58579 19.4682 9.25 19.1282 9.25 18.7087ZM9.91667 21.2404C9.91667 20.8209 10.2525 20.4809 10.6667 20.4809H13.3333C13.7475 20.4809 14.0833 20.8209 14.0833 21.2404C14.0833 21.6598 13.7475 21.9999 13.3333 21.9999H10.6667C10.2525 21.9999 9.91667 21.6598 9.91667 21.2404Z\" fill=\"currentColor\"/></svg>", "alert": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"1.5\" aria-hidden=\"true\" focusable=\"false\" ><path d=\"M12 3C9.68925 3 8.23007 5.58716 5.31171 10.7615L4.94805 11.4063C2.52291 15.7061 1.31034 17.856 2.40626 19.428C3.50217 21 6.21356 21 11.6363 21H12.3637C17.7864 21 20.4978 21 21.5937 19.428C22.6897 17.856 21.4771 15.7061 19.0519 11.4063L18.6883 10.7615C15.7699 5.58716 14.3107 3 12 3Z\" fill=\"currentColor\" style=\"color: var(--solar-secondary-color, currentColor); opacity: var(--solar-secondary-opacity, 0.5)\"/><path d=\"M12 7.25C12.4142 7.25 12.75 7.58579 12.75 8V13C12.75 13.4142 12.4142 13.75 12 13.75C11.5858 13.75 11.25 13.4142 11.25 13V8C11.25 7.58579 11.5858 7.25 12 7.25Z\" fill=\"currentColor\"/><path d=\"M12 17C12.5523 17 13 16.5523 13 16C13 15.4477 12.5523 15 12 15C11.4477 15 11 15.4477 11 16C11 16.5523 11.4477 17 12 17Z\" fill=\"currentColor\"/></svg>"};
+  function $(i){return document.getElementById(i)}
+  function qa(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
+  function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+  function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+  /* ---- shared state (kept in localStorage so all pages stay in sync) ---- */
+  var read=load('scholartrack.read',{n4:true,n5:true}), tab='all';
+  var settings=load('scholartrack.settings',{name:'Student',sid:''});
+
+  function applySettings(){
+    qa('[data-user-name]').forEach(function(e){e.textContent=settings.name||'Student'});
+    qa('[data-user-id]').forEach(function(e){e.textContent=settings.sid||'Not Provided'});
+  }
+
+  /* ---- dropdown plumbing ---- */
+  var bell=$('bell-btn'),nPanel=$('notif-panel'),pBtn=$('profile-btn'),pMenu=$('profile-menu'),moreBtn=$('np-more-btn'),moreMenu=$('np-menu');
+  function setOpen(btn,panel,open){panel.hidden=!open;btn.setAttribute('aria-expanded',open)}
+  function closeMore(){setOpen(moreBtn,moreMenu,false)}
+  function closeAll(){setOpen(bell,nPanel,false);setOpen(pBtn,pMenu,false);closeMore()}
+
+  /* ---- notifications ---- */
+  function unread(){return NOTES.filter(function(n){return !read[n.id]}).length}
+  function render(){
+    var u=unread(),items=NOTES.filter(function(n){return tab==='all'||!read[n.id]});
+    var c=$('bell-count');c.hidden=!u;c.textContent=u;
+    bell.setAttribute('aria-label',u?'Notifications, '+u+' unread':'Notifications');
+    var tn=$('tab-num');tn.hidden=!u;tn.textContent=u;
+    $('mark-all').disabled=!u;
+    $('np-list').innerHTML=items.length?items.map(function(n){
+      var un=!read[n.id];
+      return '<li><a class="n-item'+(un?' unread':'')+(n.kind==='alert'?' alert':'')+'" href="'+n.href+'" data-id="'+n.id+'">'+
+        '<span class="n-ico">'+ICONS[n.kind]+'</span>'+
+        '<span class="n-body"><b>'+n.title+'</b>'+n.text+'<small>'+n.time+'</small></span><span class="n-dot" aria-hidden="true"></span></a></li>';
+    }).join(''):'<li class="np-empty"><strong>'+(tab==='unread'?"You're all caught up":'No notifications')+'</strong>'+(tab==='unread'?'No unread notifications right now.':'Nothing here yet.')+'</li>';
+  }
+  bell.addEventListener('click',function(e){e.stopPropagation();var o=nPanel.hidden;closeAll();setOpen(bell,nPanel,o)});
+  moreBtn.addEventListener('click',function(e){e.stopPropagation();setOpen(moreBtn,moreMenu,moreMenu.hidden)});
+  nPanel.addEventListener('click',function(e){e.stopPropagation();if(!e.target.closest('.np-more'))closeMore()});
+  qa('.np-tabs button').forEach(function(b){b.addEventListener('click',function(){
+    tab=b.getAttribute('data-tab');
+    qa('.np-tabs button').forEach(function(x){var on=x===b;x.classList.toggle('active',on);x.setAttribute('aria-pressed',on)});
+    render();
+  })});
+  $('mark-all').addEventListener('click',function(){
+    NOTES.forEach(function(n){read[n.id]=true});save('scholartrack.read',read);closeMore();render();
+  });
+  $('np-list').addEventListener('click',function(e){
+    var a=e.target.closest('.n-item');if(!a)return;
+    read[a.getAttribute('data-id')]=true;save('scholartrack.read',read);
+  });
+
+  /* ---- profile menu ---- */
+  pBtn.addEventListener('click',function(e){e.stopPropagation();var o=pMenu.hidden;closeAll();setOpen(pBtn,pMenu,o)});
+  pMenu.addEventListener('click',function(e){e.stopPropagation()});
+  $('do-logout').addEventListener('click',function(){location.href='login.html'});
+
+  document.addEventListener('click',closeAll);
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Escape')return;
+    var t=!nPanel.hidden?bell:(!pMenu.hidden?pBtn:null);
+    closeAll();if(t)t.focus();
+  });
+
+  /* ---- account settings dialog ---- */
+  var dlg=$('settings-dlg'),nameIn=$('f-name'),sidIn=$('f-sid'),nameErr=$('f-name-err'),saved=$('sd-saved');
+  function openDlg(){
+    closeAll();nameIn.value=settings.name||'';sidIn.value=settings.sid||'';nameErr.hidden=true;saved.hidden=true;
+    if(dlg.showModal)dlg.showModal();else dlg.setAttribute('open','');
+    nameIn.focus();
+  }
+  function closeDlg(){if(dlg.close)dlg.close();else dlg.removeAttribute('open');pBtn.focus()}
+  $('open-settings').addEventListener('click',openDlg);
+  $('sd-x').addEventListener('click',closeDlg);
+  $('sd-cancel').addEventListener('click',closeDlg);
+  dlg.addEventListener('click',function(e){if(e.target===dlg)closeDlg()});
+  $('settings-form').addEventListener('submit',function(e){
+    e.preventDefault();
+    var n=nameIn.value.trim();
+    if(!n){nameErr.hidden=false;nameIn.focus();return}
+    nameErr.hidden=true;
+    settings={name:n,sid:sidIn.value.trim()};save('scholartrack.settings',settings);applySettings();
+    saved.hidden=false;setTimeout(closeDlg,700);
+  });
+
+  applySettings();render();
+})();
+
+function renderChart(el,labels,grades){
+  var xs=labels.map(function(_,i){return 95+i*122}),h='<g stroke="#E8E3DC" stroke-width="1">',i;
+  for(i=0;i<5;i++)h+='<line x1="55" y1="'+(35+i*50)+'" x2="740" y2="'+(35+i*50)+'"/>';
+  h+='</g><g fill="#71817B" font-size="12">';
+  for(i=0;i<5;i++)h+='<text x="12" y="'+(39+i*50)+'">'+(i+1).toFixed(2)+'</text>';
+  h+='</g><polyline points="'+grades.map(function(g,i){return xs[i]+','+(35+(g-1)*50)}).join(' ')+'" fill="none" stroke="#789F8E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';
+  h+='<g fill="#6D9A85">'+grades.map(function(g,i){return '<circle cx="'+xs[i]+'" cy="'+(35+(g-1)*50)+'" r="5"><title>'+labels[i]+': '+g.toFixed(2)+'</title></circle>'}).join('')+'</g>';
+  h+='<g fill="#71817B" font-size="11" text-anchor="middle">'+labels.map(function(l,i){return '<text x="'+xs[i]+'" y="272">'+l+'</text>'}).join('')+'</g>';
+  el.innerHTML=h;
+}
+function setActive(btn){
+  Array.prototype.forEach.call(btn.parentNode.children,function(b){var on=b===btn;b.classList.toggle('active',on);b.setAttribute('aria-pressed',on)});
+}
+
+var LABELS=['Software Eng. II','Data Structures','Database Systems','Web Dev','Discrete Math','Other'];
+var DATA={
+  midterms:{grades:[2,3,1.5,2.5,3,2.25],sn:'Database Management Systems',sv:'1.50',wn:'Discrete Mathematics',wv:'3.00',avg:'2.25',vals:['2.00','3.00','1.50','2.50','3.00'],chip:'Midterm'},
+  finals:{grades:[1.75,2.5,1.25,2,2.75,2],sn:'Database Management Systems',sv:'1.25',wn:'Discrete Mathematics',wv:'2.75',avg:'2.00',vals:['1.75','2.50','1.25','2.00','2.75'],chip:'Finals'}
+};
+function cls(g){return g<=2.25?'good':(g<3?'warn':'bad')}
+function $(id){return document.getElementById(id)}
+function show(p,btn){
+  var d=DATA[p];
+  if(btn)setActive(btn);
+  renderChart($('chart'),LABELS,d.grades);
+  $('strong-n').textContent=d.sn;$('strong-v').textContent=d.sv;
+  $('weak-n').textContent=d.wn;$('weak-v').textContent=d.wv;
+  $('avg').textContent=d.avg;
+  $('period-chip').textContent=d.chip;$('table-chip').textContent=d.chip;
+  d.vals.forEach(function(v,i){var e=$('g'+i);e.textContent=v;e.className='pill '+cls(parseFloat(v))});
+}
+Array.prototype.forEach.call(document.querySelectorAll('.toggle button'),function(b){b.addEventListener('click',function(){show(b.getAttribute('data-p'),b)})});
+show('midterms');
+</script>
+</body></html>

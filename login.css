@@ -1,0 +1,83 @@
+/* ScholarTrack — Login page styles (standalone) */
+
+:root {
+  --bg: #f8f7f2;
+  --surface: #FFFFFF;
+  --surface-sunken: #EEF0F3;
+  --border: #E1E4E9;
+  --text-primary: #1A2230;
+  --text-secondary: #5C6675;
+  --text-muted: #8891A0;
+  --accent: #00A15D;
+  --accent-fg: #FFFFFF;
+  --accent-tint: #E4EEEE;
+  --good: #2F6B45;
+  --good-tint: #E4F0E7;
+  --warn: #A0651E;
+  --warn-tint: #F5EADA;
+  --bad: #9A3B2C;
+  --bad-tint: #F6E2DE;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+
+:root:not([data-theme="light"]) {
+  @media (prefers-color-scheme: dark) {
+    --bg: #14181D; --surface: #1C2128; --surface-sunken: #23292F; --border: #2E353C;
+    --text-primary: #EDEFF2; --text-secondary: #A6ADB8; --text-muted: #767E8A;
+    --accent: #00A15D; --accent-fg: #0E1517; --accent-tint: #1E2C2C;
+    --good: #7FBE8F; --good-tint: #1C2A20; --warn: #D9A462; --warn-tint: #2C2419;
+    --bad: #E08674; --bad-tint: #2E1E1A;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #14181D; --surface: #1C2128; --surface-sunken: #23292F; --border: #2E353C;
+  --text-primary: #EDEFF2; --text-secondary: #A6ADB8; --text-muted: #767E8A;
+  --accent: #00A15D; --accent-fg: #0E1517; --accent-tint: #1E2C2C;
+  --good: #7FBE8F; --good-tint: #1C2A20; --warn: #D9A462; --warn-tint: #2C2419;
+  --bad: #E08674; --bad-tint: #2E1E1A;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+}
+
+#view-login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+.login-wrap { width: 100%; max-width: 380px; }
+.login-brand { display: flex; align-items: center; gap: 10px; justify-content: center; margin-bottom: 1.75rem; }
+.login-brand .brand-mark {
+  width: 36px; height: 36px; border-radius: 9px; font-size: 16px;
+  display: flex; align-items: center; justify-content: center; font-weight: 700;
+  background: var(--accent); color: var(--accent-fg); flex-shrink: 0;
+}
+.login-brand-name { font-weight: 600; font-size: 19px; }
+.login-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem 1.75rem 1.5rem; }
+.login-title { font-size: 17px; font-weight: 600; margin: 0 0 2px; text-align: center; }
+.login-sub { font-size: 13px; color: var(--text-secondary); margin: 0 0 1.5rem; text-align: center; }
+.role-toggle { display: flex; border: 1px solid var(--border); border-radius: 999px; padding: 3px; background: var(--surface-sunken); margin-bottom: 1.5rem; }
+.role-toggle button { flex: 1; border: none; background: none; font-family: inherit; font-size: 13px; font-weight: 500; padding: 8px 0; border-radius: 999px; cursor: pointer; color: var(--text-secondary); }
+.role-toggle button.active { background: var(--accent); color: var(--accent-fg); }
+.login-card label { display: block; font-size: 12.5px; color: var(--text-secondary); margin: 0 0 5px; }
+.login-field { margin-bottom: 1rem; }
+.login-card input[type="text"], .login-card input[type="password"] {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 9px;
+  background: var(--surface-sunken); color: var(--text-primary); font-family: inherit; font-size: 14px;
+}
+.login-card input:focus { outline: none; border-color: var(--accent); }
+.row-between { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; font-size: 12.5px; }
+.remember { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); }
+.remember input { accent-color: var(--accent); }
+a.forgot { color: var(--accent); text-decoration: none; }
+a.forgot:hover { text-decoration: underline; }
+button.submit { width: 100%; border: none; background: var(--accent); color: var(--accent-fg); font-family: inherit; font-size: 14px; font-weight: 600; padding: 11px 0; border-radius: 9px; cursor: pointer; }
+button.submit:hover { opacity: 0.92; }
+.error-msg { display: none; background: var(--bad-tint); color: var(--bad); font-size: 12.5px; padding: 8px 10px; border-radius: 8px; margin-bottom: 1rem; }
+.error-msg.show { display: block; }
+.footer-note { text-align: center; font-size: 11.5px; color: var(--text-muted); margin-top: 1.25rem; }

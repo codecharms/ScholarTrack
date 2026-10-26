@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ScholarTrack — Log in</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+<h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">
+  ScholarTrack — sign in to open the Student Portal or the Instructor Portal.
+</h1>
+
+<div id="view-login">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <div class="brand-mark">ST</div>
+      <div class="login-brand-name">ScholarTrack</div>
+    </div>
+    <div class="login-card">
+      <p class="login-title">Welcome back</p>
+      <p class="login-sub">Log in to your ScholarTrack account</p>
+
+      <div class="role-toggle" id="role-toggle">
+        <button data-role="student" class="active">Student</button>
+        <button data-role="instructor">Instructor</button>
+      </div>
+
+      <div class="error-msg" id="error-msg">Please enter your ID and password.</div>
+
+      <form id="login-form">
+        <div class="login-field">
+          <label id="id-label" for="login-id">Student ID / Email</label>
+          <input type="text" id="login-id" autocomplete="username" placeholder="e.g. 22-00000 or you@cvsu.edu.ph" />
+        </div>
+        <div class="login-field">
+          <label for="login-pass">Password</label>
+          <input type="password" id="login-pass" autocomplete="current-password" placeholder="••••••••" />
+        </div>
+        <div class="row-between">
+          <label class="remember"><input type="checkbox" /> Remember me</label>
+          <a href="#" class="forgot" onclick="return false;">Forgot password?</a>
+        </div>
+        <button type="submit" class="submit" id="submit-btn">Log in as Student</button>
+      </form>
+      <p class="footer-note">Cavite State University – Imus Campus · Department of Computer Studies</p>
+    </div>
+  </div>
+</div>
+
+<script>
+let loginRole = 'student';
+
+document.getElementById('role-toggle').querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    loginRole = btn.getAttribute('data-role');
+    document.getElementById('role-toggle').querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
+    const idLabel = document.getElementById('id-label');
+    const idInput = document.getElementById('login-id');
+    const submitBtn = document.getElementById('submit-btn');
+    if (loginRole === 'student') {
+      idLabel.textContent = 'Student ID / Email';
+      idInput.placeholder = 'e.g. 22-00000 or you@cvsu.edu.ph';
+      submitBtn.textContent = 'Log in as Student';
+    } else {
+      idLabel.textContent = 'Faculty ID / Email';
+      idInput.placeholder = 'e.g. FAC-0000 or you@cvsu.edu.ph';
+      submitBtn.textContent = 'Log in as Instructor';
+    }
+    document.getElementById('error-msg').classList.remove('show');
+  });
+});
+
+document.getElementById('login-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const idVal = document.getElementById('login-id').value.trim();
+  const passVal = document.getElementById('login-pass').value.trim();
+  const errorMsg = document.getElementById('error-msg');
+
+  if (!idVal || !passVal) {
+    errorMsg.textContent = 'Please enter your ' + (loginRole === 'student' ? 'Student ID / email' : 'Faculty ID / email') + ' and password.';
+    errorMsg.classList.add('show');
+    return;
+  }
+  errorMsg.classList.remove('show');
+
+  const target = loginRole === 'student' ? 'student-dashboard.html' : 'instructor-dashboard.html';
+  window.open(target, '_blank');
+});
+</script>
+</body>
+</html>
