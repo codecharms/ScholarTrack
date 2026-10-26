@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScholarTrack | Professor Dashboard</title>
+  <link rel="stylesheet" href="scholartrack_prof.css">
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- ==============================================
+         sidebar
+         =============================================== -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-line">
+          <span aria-hidden="true" class="cap">🎓</span>
+          <span>ScholarTrack</span>
+        </div>
+        <p class="brand-subtitle">
+          Cavite State University – Imus Campus · Department of
+          <br />
+          Computer Studies
+        </p>
+      </div>
+
+      <nav aria-label="Main navigation" class="nav">
+        <button class="active" data-page="dashboard">
+          <span class="ico">⌂</span>
+          Dashboard
+        </button>
+        <button data-page="sections">
+          <span class="ico">▦</span>
+          Classes
+        </button>
+        <button data-page="grades">
+          <span class="ico">▤</span>
+          Grade Management
+        </button>
+        <button data-page="profile">
+          <span class="ico">👤</span>
+          Profile
+        </button>
+      </nav>
+
+      <div class="side-bottom">
+        <!-- Log out: closes the tab (see logout() in the script) -->
+        <button class="nav-button" onclick="logout()" style="border:0;background:transparent;color:#285b55;padding:12px">
+          Log out
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+
+      <!-- =====================================================
+           top bar
+           ========================================== -->
+      <header class="topbar">
+        <div class="avatar">♟</div>
+        <div class="user">
+          <strong>Professor</strong>
+          <small>Faculty member</small>
+        </div>
+      </header>
+
+      <!-- =====================================================
+           dashboard page
+           ========================================= -->
+      <section class="page active" id="dashboard">
+        <div class="heading">
+          <h1>Good morning, Professor!</h1>
+          <p>Manage your handled sections, monitor student progress, and submit grades.</p>
+        </div>
+
+        <div class="grid">
+          <div class="stat">
+            <div class="emoji">📚</div>
+            <div class="label">Sections Handled</div>
+            <div class="value" id="statSections">3</div>
+            <div class="sub">Assigned this term</div>
+          </div>
+          <div class="stat">
+            <div class="emoji">📝</div>
+            <div class="label">Grades In Progress</div>
+            <div class="value" id="statPending">2</div>
+            <div class="sub">Sections with grades to review</div>
+          </div>
+          <div class="stat">
+            <div class="emoji">✓</div>
+            <div class="label">Grades Submitted</div>
+            <div class="value" id="statSubmitted">1</div>
+            <div class="sub">Sections completed</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Sections that need attention</h2>
+            <span class="pill">This term</span>
+          </div>
+          <div class="section-list">
+            <div class="section-row">
+              <div>
+                <h3>Data Structures and Algorithms</h3>
+                <p>COSC 63 · BSCS-2G · 28 students</p>
+              </div>
+              <div class="row-actions">
+                <span class="tag">Grades in progress</span>
+                <button class="btn small" onclick="openSection('cosc63')">Open section</button>
+              </div>
+            </div>
+            <div class="section-row">
+              <div>
+                <h3>Web Development</h3>
+                <p>COSC 71 · BSCS-2G · 24 students</p>
+              </div>
+              <div class="row-actions">
+                <span class="tag">Grades in progress</span>
+                <button class="btn small" onclick="openSection('cosc71')">Open section</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Quick actions</h2>
+          </div>
+          <div class="toolbar">
+            <button class="btn" onclick="showPage('sections')">View handled sections</button>
+            <button class="btn secondary" onclick="showPage('grades')">Enter or upload grades</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================
+           classes page
+           ================== -->
+      <section class="page" id="sections">
+        <div class="heading">
+          <h1>Classes</h1>
+          <p>Open Enrolled Subjects</p>
+        </div>
+
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2>Enrolled Subjects</h2>
+              <p class="muted" style="margin:7px 0 0;font-size:13px">Your assigned subjects and their sections</p>
+            </div>
+            <span class="pill">3 sections</span>
+          </div>
+
+          <div class="toolbar">
+            <input aria-label="Search sections" id="sectionSearch" oninput="filterSections()"
+              placeholder="Search subject, course code, or section..." />
+          </div>
+
+          <div class="section-list" id="sectionList">
+            <div class="section-row" data-search="software engineering ii cosc 75a bscs 2g">
+              <div>
+                <h3>Software Engineering II</h3>
+                <p>COSC 75A · BSCS-2G · <span class="student-count">24</span> students</p>
+              </div>
+              <div class="row-actions">
+                <span class="tag">Grades submitted</span>
+                <button class="btn" onclick="openSection('cosc75a')">View students</button>
+              </div>
+            </div>
+
+            <div class="section-row" data-search="data structures and algorithms cosc 63 bscs 2g">
+              <div>
+                <h3>Data Structures and Algorithms</h3>
+                <p>COSC 63 · BSCS-2G · <span class="student-count">28</span> students</p>
+              </div>
+              <div class="row-actions">
+                <span class="tag">In progress</span>
+                <button class="btn" onclick="openSection('cosc63')">View students</button>
+              </div>
+            </div>
+
+            <div class="section-row" data-search="web development cosc 71 bscs 2g">
+              <div>
+                <h3>Web Development</h3>
+                <p>COSC 71 · BSCS-2G · <span class="student-count">24</span> students</p>
+              </div>
+              <div class="row-actions">
+                <span class="tag">In progress</span>
+                <button class="btn" onclick="openSection('cosc71')">View students</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================
+           students page
+           ======================== -->
+      <section class="page" id="students">
+        <div class="heading">
+          <h1 id="sectionTitle">Section students</h1>
+          <p id="sectionSubtitle">Students enrolled in the selected section.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 id="rosterHeading">Student roster</h2>
+              <p class="muted" id="rosterMeta" style="margin:7px 0 0;font-size:13px">Course and section details</p>
+            </div>
+            <button class="btn secondary" onclick="showPage('sections')">← Back to sections</button>
+          </div>
+]
+          <div class="workflow-crumb" style="display:none">
+            <span>Classes</span><b>›</b>
+            <span>Enrolled Subjects</span><b>›</b>
+            <span id="crumbSection">Section</span><b>›</b>
+            <span>Students</span><b>›</b>
+            <span>Grades &amp; Remarks</span>
+          </div>
+
+          <div class="notice">
+            Click Grade beside a student to enter their Lecture (40%) and Laboratory (60%) scores. The grade is computed
+            automatically using the transmutation table. You can also add remarks about each student’s performance. Save
+            your changes when finished.
+          </div>
+]
+          <div class="toolbar">
+            <input aria-label="Search students" id="studentSearch" oninput="renderStudents()"
+              placeholder="Search student name or ID..." />
+            <div class="period-toggle" role="group" aria-label="Grading period">
+              <button type="button" class="active" id="periodMidterm" aria-pressed="true"
+                onclick="setPeriod('Midterm')">Midterm</button>
+              <button type="button" id="periodFinal" aria-pressed="false"
+                onclick="setPeriod('Final')">Finals</button>
+            </div>
+          </div>
+]
+          <div class="table-wrap">
+            <table class="grade-table">
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Student ID</th>
+                  <th>Midterm</th>
+                  <th>Final</th>
+                  <th>Overall grade</th>
+                  <th>Grade status</th>
+                  <th>Performance remarks</th>
+                  <th>Grade</th>
+                </tr>
+              </thead>
+              <tbody id="studentRows"></tbody>
+            </table>
+          </div>
+
+          <button class="btn" onclick="saveGrades()">Save grades</button>
+          <button class="btn secondary" onclick="submitGrades()">Submit grades</button>
+        </div>
+      </section>
+
+      <!-- =====================================================
+           grade management page
+           =========]============================ -->
+      <section class="page" id="grades">
+        <div class="heading">
+          <h1>Grade Management</h1>
+          <p>Enter, review, and submit grades for your handled sections.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Choose a section to manage grades</h2>
+          </div>
+          <div class="section-list">
+            <div class="section-row">
+              <div>
+                <h3>Software Engineering II</h3>
+                <p>COSC 75A · BSCS-2G · 8 students</p>
+              </div>
+              <button class="btn" onclick="openSection('cosc75a')">Manage grades</button>
+            </div>
+            <div class="section-row">
+              <div>
+                <h3>Data Structures and Algorithms</h3>
+                <p>COSC 63 · BSCS-2G · 8 students</p>
+              </div>
+              <button class="btn" onclick="openSection('cosc63')">Manage grades</button>
+            </div>
+            <div class="section-row">
+              <div>
+                <h3>Web Development</h3>
+                <p>COSC 71 · BSCS-2G · 8 students</p>
+              </div>
+              <button class="btn" onclick="openSection('cosc71')">Manage grades</button>
+            </div>
+          </div>
+        </div>
+
+<!-- =====================================================
+           profile page
+           ===================================================== -->
+      <section class="page" id="profile">
+        <div class="heading">
+          <h1>Professor Profile</h1>
+          <p>Your faculty account and teaching assignment overview.</p>
+        </div>
+
+        <div class="card profile">
+          <div class="profile-avatar">👤</div>
+          <h2 style="margin:0 0 7px">Professor</h2>
+          <p class="muted" style="margin:0" id="profileSubtitle">Faculty member · Computer Studies</p>
+
+          <button class="btn secondary" id="editProfileBtn" type="button" style="margin-top:18px"
+            onclick="startProfileEdit()">Edit profile</button>
+
+          <div class="info-list" id="profileInfo">
+            <div class="info-item">
+              <span class="muted">Full name</span>
+              <strong id="profileFullName">Christian Xander Testibia</strong>
+            </div>
+            <div class="info-item">
+              <span class="muted">Faculty ID</span>
+              <strong id="profileFacultyId">20246767</strong>
+            </div>
+            <div class="info-item">
+              <span class="muted">Department</span>
+              <strong id="profileDepartment">Computer Studies</strong>
+            </div>
+            <div class="info-item">
+              <span class="muted">Academic term</span>
+              <strong id="profileTerm">Current term</strong>
+            </div>
+            <div class="info-item">
+              <span class="muted">Sections handled</span>
+              <strong>3</strong>
+            </div>
+          </div>
+
+          <div id="profileForm" style="display:none;text-align:left;margin-top:30px">
+            <div class="field">
+              <label for="editFullName">Full name</label>
+              <input id="editFullName" type="text" />
+            </div>
+            <div class="field">
+              <label for="editFacultyId">Faculty ID</label>
+              <input id="editFacultyId" type="text" />
+            </div>
+            <div class="field">
+              <label for="editDepartment">Department</label>
+              <input id="editDepartment" type="text" />
+            </div>
+            <div class="field">
+              <label for="editTerm">Academic term</label>
+              <input id="editTerm" type="text" />
+            </div>
+            <div class="toolbar" style="justify-content:flex-end;margin:20px 0 0">
+              <button class="btn secondary" type="button" onclick="cancelProfileEdit()">Cancel</button>
+              <button class="btn" type="button" onclick="saveProfile()">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- =====================================================
+       grade popup
+       ===================================================== -->
+  <div class="modal-overlay" id="gradeModal" onclick="if (event.target === this) closeGradeModal()">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h2 id="modalTitle">Grade</h2>
+      <p class="modal-sub" id="modalSub"></p>
+
+      <div class="field">
+        <label for="modalTerm">Term</label>
+        <select id="modalTerm" onchange="onModalTermChange()">
+          <option value="Midterm">Midterm</option>
+          <option value="Final">Finals</option>
+        </select>
+      </div>
+
+      <div class="modal-columns">
+        <div>
+          <h3>Lecture (40%)</h3>
+          <div id="modalLecture"></div>
+        </div>
+        <div>
+          <h3>Laboratory (60%)</h3>
+          <div id="modalLab"></div>
+        </div>
+      </div>
+
+      <div class="modal-summary">
+        <span id="modalGroups">Lecture — · Laboratory —</span>
+        <span id="modalOverall">Overall — → Grade <strong>—</strong></span>
+      </div>
+
+      <label class="modal-label" for="modalRemarks">Performance remarks</label>
+      <textarea id="modalRemarks" placeholder="Strengths, areas to improve, feedback..."></textarea>
+
+      <div class="modal-actions">
+        <button class="btn secondary" type="button" onclick="closeGradeModal()">Cancel</button>
+        <button class="btn" type="button" onclick="saveModal()">Save grades</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    /* =========================================================
+       grading system
+       ========================================================= */
+
+    const GROUP_WEIGHTS = { Lecture: 0.40, Laboratory: 0.60 };
+
+    const GRADE_COMPONENTS = [
+      // Lecture (40%)
+      { key: 'lecMidterm',       group: 'Lecture',    label: 'Midterm exam',         weight: 0.20 },
+      { key: 'lecFinal',         group: 'Lecture',    label: 'Final exam',           weight: 0.20 },
+      { key: 'lecAttendance',    group: 'Lecture',    label: 'Attendance',           weight: 0.10 },
+      { key: 'lecOutputs',       group: 'Lecture',    label: 'Outputs / portfolio',  weight: 0.25 },
+      { key: 'lecQuizzes',       group: 'Lecture',    label: 'Quizzes / long exams', weight: 0.15 },
+      { key: 'lecParticipation', group: 'Lecture',    label: 'Class participation',  weight: 0.10 },
+      // Laboratory (60%)
+      { key: 'labAttendance',    group: 'Laboratory', label: 'Attendance',           weight: 0.20 },
+      { key: 'labActivity',      group: 'Laboratory', label: 'Laboratory activity',  weight: 0.50 },
+      { key: 'labPractical',     group: 'Laboratory', label: 'Practical exam',       weight: 0.30 }
+    ];
+
+    const TRANSMUTATION_TABLE = [
+      { min: 96.7, grade: 1.00 },   // 96.7 – 100.0
+      { min: 93.4, grade: 1.25 },   // 93.4 – 96.6
+      { min: 90.1, grade: 1.50 },   // 90.1 – 93.30
+      { min: 86.7, grade: 1.75 },   // 86.7 – 90.0
+      { min: 83.4, grade: 2.00 },   // 83.4 – 86.6
+      { min: 80.1, grade: 2.25 },   // 80.1 – 83.3
+      { min: 76.7, grade: 2.50 },   // 76.7 – 80.0
+      { min: 73.4, grade: 2.75 },   // 73.4 – 76.6
+      { min: 70.0, grade: 3.00 },   // 70.00 – 73.3
+      { min: 50.0, grade: 4.00 },   // 50.0 – 69.9  (Conditional Failure)
+      { min: 0,    grade: 5.00 }    // Below 50     (Failed)
+    ];
+
+    const SAMPLE_GRADE_TO_PERCENT = {
+      1: 98, 1.25: 95, 1.5: 92, 1.75: 88, 2: 85, 2.25: 82, 2.5: 78, 2.75: 75, 3: 72, 4: 60, 5: 40
+    };
+
+
+
+    const sectionData = {
+      cosc75a: {
+        title: 'Software Engineering II', code: 'COSC 75A', section: 'BSCS-2G',
+        students: [
+          ['2024-001', 'Rainbow Dash', 1.75, 1.50], ['2024-002', 'Twilight Sparkle', 2.00, 1.75],
+          ['2024-003', 'Apple Jack', 1.50, 1.50],   ['2024-004', 'Rar Ity', 2.25, ''],
+          ['2024-005', 'Pinkie Pie', 1.75, ''],     ['2024-006', 'Flutter Shy', 2.50, ''],
+          ['2024-007', 'Sunset Shimmer', 1.75, ''], ['2024-008', 'Spikey Wikey', 2.00, '']
+        ]
+      },
+      cosc63: {
+        title: 'Data Structures and Algorithms', code: 'COSC 63', section: 'BSCS-2G',
+        students: [
+          ['2024-011', 'Frankie Stein', 2.75, ''],   ['2024-012', 'Clawdeen Wolf', 2.25, ''],
+          ['2024-013', 'Cleo de Nile', 2.50, ''],    ['2024-014', 'Dracu Laura', 3.00, ''],
+          ['2024-015', 'Lagoona Blue', 2.00, ''],    ['2024-016', 'Ghoulia Yelps', 2.75, ''],
+          ['2024-017', 'Abbey Bominable', 2.50, ''], ['2024-018', 'Deuce Gorgon', 2.25, '']
+        ]
+      },
+      cosc71: {
+        title: 'Web Development', code: 'COSC 71', section: 'BSCS-2G',
+        students: [
+          ['2024-021', 'Strawberry Shortcake', 2.50, ''], ['2024-022', 'Lemon Meringue', 2.00, ''],
+          ['2024-023', 'Blueberry Muffin', 2.25, ''],     ['2024-024', 'Orange Blossom', 2.75, ''],
+          ['2024-025', 'Raspberry Torte', 1.75, ''],      ['2024-026', 'Cherry Jam', 2.50, ''],
+          ['2024-027', 'Plum Pudding', 2.25, ''],         ['2024-028', 'Apple Dumpling', 2.00, '']
+        ]
+      }
+    };
+
+    /* =========================================================
+       app
+       ========================================================= */
+    let currentSection = 'cosc63';
+    let currentPeriod = 'Midterm';
+    let saved = {};
+    let remarks = {};
+    let submitted = { cosc75a: true, cosc63: false, cosc71: false };
+
+    let profile = {
+      fullName: 'Christian Xander Testibia',
+      facultyId: '20246767',
+      department: 'Computer Studies',
+      term: 'Current term'
+    };
+
+    let modalStudent = null;
+    let modalPeriod = 'Midterm';
+    let modalDraft = {};
+
+    /* =========================================================
+       navigation n notifs
+       ========================================================= */
+
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === id));
+      document.querySelectorAll('.nav button[data-page]').forEach(b =>
+        b.classList.toggle('active', b.dataset.page === id || (id === 'students' && b.dataset.page === 'sections')));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.nav button[data-page]').forEach(b =>
+      b.addEventListener('click', () => showPage(b.dataset.page)));
+
+    function notify(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    function logout() {
+      notify('You have been logged out.');
+      setTimeout(() => {
+        window.open('', '_self');   // helps some browsers allow the close
+        window.close();
+        // Browsers only let a script close tabs it opened itself.
+        // If the tab is still open, fall back to a blank page.
+        setTimeout(() => { window.location.href = 'about:blank'; }, 300);
+      }, 600);
+    }
+
+    /* =========================================================
+       sections n grading
+       ========================================================= */
+
+    function openSection(id) {
+      currentSection = id;
+      const s = sectionData[id];
+      document.getElementById('sectionTitle').textContent = s.title;
+      document.getElementById('crumbSection').textContent = s.section;
+      document.getElementById('sectionSubtitle').textContent = s.code + ' · ' + s.section + ' — enrolled students and grades';
+      document.getElementById('rosterHeading').textContent = 'Student roster · ' + s.title;
+      document.getElementById('rosterMeta').textContent = s.code + ' · ' + s.section + ' · ' + s.students.length + ' sample students shown';
+      document.getElementById('studentSearch').value = '';
+      renderStudents();
+      showPage('students');
+    }
+
+    function filterSections() {
+      const q = document.getElementById('sectionSearch').value.toLowerCase();
+      document.querySelectorAll('#sectionList .section-row').forEach(r =>
+        r.style.display = r.dataset.search.includes(q) ? 'flex' : 'none');
+    }
+
+    function setPeriod(period) {
+      currentPeriod = period;
+      document.getElementById('periodMidterm').classList.toggle('active', period === 'Midterm');
+      document.getElementById('periodFinal').classList.toggle('active', period === 'Final');
+      document.getElementById('periodMidterm').setAttribute('aria-pressed', period === 'Midterm');
+      document.getElementById('periodFinal').setAttribute('aria-pressed', period === 'Final');
+    }
+
+    function getPeriod() {
+      return currentPeriod;
+    }
+
+    /* =========================================================
+       grade computation
+       ========================================================= */
+
+    function scoreKey(studentIndex, period, componentKey) {
+      return currentSection + '_' + studentIndex + '_' + period + '_' + componentKey;
+    }
+
+    function getScore(studentIndex, period, componentKey) {
+      const key = scoreKey(studentIndex, period, componentKey);
+      if (saved[key] !== undefined) return saved[key];
+      const sampleGrade = sectionData[currentSection].students[studentIndex][period === 'Midterm' ? 2 : 3];
+      if (sampleGrade === '') return '';
+      const percent = SAMPLE_GRADE_TO_PERCENT[sampleGrade];
+      return percent === undefined ? '' : percent;
+    }
+
+    // Returns '' if any score in the group is blank or invalid.
+    function computeGroupPercent(getter, group) {
+      let total = 0;
+      for (const c of GRADE_COMPONENTS.filter(c => c.group === group)) {
+        const score = getter(c.key);
+        if (score === '' || score === undefined || score === null || isNaN(Number(score))) return '';
+        total += Number(score) * c.weight;
+      }
+      return total;
+    }
+
+    function computePercentFromScores(getter) {
+      const lecture = computeGroupPercent(getter, 'Lecture');
+      const laboratory = computeGroupPercent(getter, 'Laboratory');
+      if (lecture === '' || laboratory === '') return '';
+      const total = lecture * GROUP_WEIGHTS.Lecture + laboratory * GROUP_WEIGHTS.Laboratory;
+      return Math.round(total * 100) / 100;
+    }
+
+    function computePeriodPercent(studentIndex, period) {
+      return computePercentFromScores(key => getScore(studentIndex, period, key));
+    }
+
+    function transmute(percent) {
+      if (percent === '') return '';
+      const rounded = Math.round(percent * 10) / 10;
+      return TRANSMUTATION_TABLE.find(row => rounded >= row.min).grade;
+    }
+
+    function computeOverall(studentIndex) {
+      const mid = computePeriodPercent(studentIndex, 'Midterm');
+      const fin = computePeriodPercent(studentIndex, 'Final');
+      if (mid === '' || fin === '') return { percent: '', grade: '' };
+      const percent = Math.round(((mid + fin) / 2) * 100) / 100;
+      return { percent: percent, grade: transmute(percent) };
+    }
+
+    function formatGrade(grade) {
+      return grade === '' ? '—' : Number(grade).toFixed(2);
+    }
+
+    function gradeStatus(grade) {
+      if (grade === '') return 'Pending';
+      if (grade === 4.00) return 'Conditional failure';
+      if (grade === 5.00) return 'Failed';
+      return 'Complete';
+    }
+
+    /* =========================================================
+       student table
+       ========================================================= */
+
+    function renderStudents() {
+      const data = sectionData[currentSection];
+      const q = document.getElementById('studentSearch').value.toLowerCase();
+      const tbody = document.getElementById('studentRows');
+      tbody.innerHTML = '';
+
+      data.students.forEach((s, i) => {
+        if (!(s[0] + ' ' + s[1]).toLowerCase().includes(q)) return;
+
+        const midGrade = transmute(computePeriodPercent(i, 'Midterm'));
+        const finGrade = transmute(computePeriodPercent(i, 'Final'));
+        const overall = computeOverall(i);
+        const remark = remarks[currentSection + '_' + i] || '';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+          `<td><div class="student-top"><div class="student-initial">${s[1].split(' ').map(x => x[0]).slice(0, 2).join('')}</div>
+<div><div class="student-name">${s[1]}</div>
+<div class="student-id">Enrolled student</div>
+</div>
+</div>
+</td>
+<td>${s[0]}</td>` +
+          `<td><strong>${formatGrade(midGrade)}</strong></td>` +
+          `<td><strong>${formatGrade(finGrade)}</strong></td>` +
+          `<td><strong>${formatGrade(overall.grade)}</strong></td>` +
+          `<td><span class="tag">${gradeStatus(overall.grade)}</span></td>` +
+          `<td><textarea class="remark-input" aria-label="Performance remarks for ${s[1]}" placeholder="Add strengths, areas to improve, and feedback..." onchange="setRemark(${i},this.value)">${escapeHTML(remark)}</textarea></td>` +
+          `<td><button class="btn" type="button" onclick="openGradeModal(${i})">Grade</button></td>`;
+        tbody.appendChild(tr);
+      });
+
+      if (!tbody.children.length) {
+        tbody.innerHTML = '<tr><td colspan="8" class="empty">No students match your search.</td></tr>';
+      }
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, ch =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+    }
+
+    function setRemark(i, value) {
+      remarks[currentSection + '_' + i] = value;
+    }
+
+    /* =========================================================
+       grade popup
+       ========================================================= */
+
+    function openGradeModal(i) {
+      const section = sectionData[currentSection];
+      const s = section.students[i];
+      modalStudent = i;
+      modalPeriod = currentPeriod;
+
+      modalDraft = {};
+      ['Midterm', 'Final'].forEach(p => {
+        modalDraft[p] = {};
+        GRADE_COMPONENTS.forEach(c => { modalDraft[p][c.key] = getScore(i, p, c.key); });
+      });
+
+      document.getElementById('modalTitle').textContent = 'Grade · ' + s[1];
+      document.getElementById('modalSub').textContent = s[0] + ' · ' + section.section;
+      document.getElementById('modalTerm').value = modalPeriod;
+      document.getElementById('modalRemarks').value = remarks[currentSection + '_' + i] || '';
+
+      renderModalScores();
+      document.getElementById('gradeModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeGradeModal() {
+      document.getElementById('gradeModal').classList.remove('open');
+      document.body.style.overflow = '';
+      modalStudent = null;
+    }
+
+    function renderModalScores() {
+      const rowsFor = group => GRADE_COMPONENTS.filter(c => c.group === group).map(c =>
+        `<div class="score-row">
+          <span class="score-label"><strong>${c.label}</strong> <small>(${Math.round(c.weight * 100)}%)</small></span>
+          <input class="modal-score" type="number" min="0" max="100" step=".01" aria-label="${c.group} ${c.label}"
+            value="${modalDraft[modalPeriod][c.key]}" oninput="onModalScoreInput('${c.key}', this.value)">
+        </div>`).join('');
+
+      document.getElementById('modalLecture').innerHTML = rowsFor('Lecture');
+      document.getElementById('modalLab').innerHTML = rowsFor('Laboratory');
+      updateModalSummary();
+    }
+
+    function onModalTermChange() {
+      modalPeriod = document.getElementById('modalTerm').value;
+      renderModalScores();
+    }
+
+    function onModalScoreInput(componentKey, value) {
+      modalDraft[modalPeriod][componentKey] = value;
+      updateModalSummary();
+    }
+
+    function updateModalSummary() {
+      const getter = key => modalDraft[modalPeriod][key];
+      const lecture = computeGroupPercent(getter, 'Lecture');
+      const laboratory = computeGroupPercent(getter, 'Laboratory');
+      const percent = computePercentFromScores(getter);
+      const grade = transmute(percent);
+      const show = v => v === '' ? '—' : (Math.round(v * 10) / 10).toFixed(1) + '%';
+
+      document.getElementById('modalGroups').textContent = 'Lecture ' + show(lecture) + ' · Laboratory ' + show(laboratory);
+      document.getElementById('modalOverall').innerHTML = 'Overall ' + show(percent) + ' → Grade <strong>' + formatGrade(grade) + '</strong>';
+    }
+
+    function saveModal() {
+      // Every filled score must be between 0 and 100
+      for (const p of ['Midterm', 'Final']) {
+        for (const c of GRADE_COMPONENTS) {
+          const v = modalDraft[p][c.key];
+          if (v !== '' && (isNaN(Number(v)) || Number(v) < 0 || Number(v) > 100)) {
+            notify('Scores must be between 0 and 100.');
+            return;
+          }
+        }
+      }
+
+      const i = modalStudent;
+      ['Midterm', 'Final'].forEach(p => {
+        GRADE_COMPONENTS.forEach(c => {
+          const v = modalDraft[p][c.key];
+          saved[scoreKey(i, p, c.key)] = v === '' ? '' : Number(v);
+        });
+      });
+      remarks[currentSection + '_' + i] = document.getElementById('modalRemarks').value;
+
+      const name = sectionData[currentSection].students[i][1];
+      renderStudents();
+      closeGradeModal();
+      notify('Grades saved for ' + name + '.');
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGradeModal(); });
+
+    /* =========================================================
+       save n submit
+       ========================================================= */
+
+    function saveGrades() {
+      notify('Grades and performance remarks saved for ' + sectionData[currentSection].title + '.');
+    }
+
+    function submitGrades() {
+      const missing = sectionData[currentSection].students.some((s, i) =>
+        computePeriodPercent(i, 'Midterm') === '' || computePeriodPercent(i, 'Final') === '');
+      if (missing) {
+        notify('Some grades are still blank. You can submit, but review them first.');
+        return;
+      }
+      submitted[currentSection] = true;
+      notify('Grades marked as submitted.');
+    }
+
+      /* =========================================================
+       profile editing
+       ================================== */
+
+    function renderProfile() {
+      document.getElementById('profileFullName').textContent = profile.fullName;
+      document.getElementById('profileFacultyId').textContent = profile.facultyId;
+      document.getElementById('profileDepartment').textContent = profile.department;
+      document.getElementById('profileTerm').textContent = profile.term;
+      document.getElementById('profileSubtitle').textContent = 'Faculty member · ' + profile.department;
+    }
+
+    function startProfileEdit() {
+      document.getElementById('editFullName').value = profile.fullName;
+      document.getElementById('editFacultyId').value = profile.facultyId;
+      document.getElementById('editDepartment').value = profile.department;
+      document.getElementById('editTerm').value = profile.term;
+
+      document.getElementById('profileInfo').style.display = 'none';
+      document.getElementById('editProfileBtn').style.display = 'none';
+      document.getElementById('profileForm').style.display = 'block';
+    }
+
+    function cancelProfileEdit() {
+      document.getElementById('profileForm').style.display = 'none';
+      document.getElementById('profileInfo').style.display = '';
+      document.getElementById('editProfileBtn').style.display = '';
+    }
+
+    function saveProfile() {
+      const fullName = document.getElementById('editFullName').value.trim();
+      const facultyId = document.getElementById('editFacultyId').value.trim();
+      const department = document.getElementById('editDepartment').value.trim();
+      const term = document.getElementById('editTerm').value.trim();
+
+      if (!fullName || !facultyId || !department || !term) {
+        notify('Please fill in all fields before saving.');
+        return;
+      }
+
+      profile = { fullName: fullName, facultyId: facultyId, department: department, term: term };
+      renderProfile();
+      cancelProfileEdit();
+      notify('Profile updated.');
+    }
+  </script>
+</body>
+
+</html>
